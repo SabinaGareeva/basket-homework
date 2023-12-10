@@ -35,7 +35,7 @@ async function loadJSON() {
   let html = ''
 
   try {
-    const response = await fetch('http://localhost:3000/products')
+    const response = await fetch('https://github.com/SabinaGareeva/basket-homework/blob/main/db.json')
     const data = await response.json()
 
     console.log('data', data)
@@ -103,7 +103,7 @@ const addProduct = async () => {
   })
 
   try {
-    const response = await fetch(' http://localhost:3000/products', {
+    const response = await fetch('https://github.com/SabinaGareeva/basket-homework/blob/main/db.json', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
