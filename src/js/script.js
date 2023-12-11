@@ -18,13 +18,12 @@ const init = () => {
     await loadJSON() // асинхронная функция загрузки данных (код будет ждать, пока эта функция завершится)
 
     loadCart() // функция загрузки данных в корзину товаров
-
     // Обработка данных формы
     form.addEventListener('submit', (e) => {
       e.preventDefault() // иначе форма отправится синхронно. Это приведет к перезапуску страницы, а значит, метод addProduct не успеет выполниться.
       addProduct()
     })
-    purchaseProduct()
+    // purchaseProduct()
   })
 }
 
@@ -35,7 +34,7 @@ async function loadJSON() {
   let html = ''
 
   try {
-    const response = await fetch('https://github.com/SabinaGareeva/basket-homework/blob/main/db.json')
+    const response = await fetch('http://localhost:3000/products')
     const data = await response.json()
 
     console.log('data', data)
@@ -83,6 +82,7 @@ async function loadJSON() {
     productList.innerHTML = ''
 
     productList.insertAdjacentHTML('beforeend', html)
+    purchaseProduct()
   } catch (error) {
     console.error('Ошибка загрузки данных:', error)
   }
@@ -103,7 +103,7 @@ const addProduct = async () => {
   })
 
   try {
-    const response = await fetch('https://github.com/SabinaGareeva/basket-homework/blob/main/db.json', {
+    const response = await fetch('http://localhost:3000/products', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -128,12 +128,16 @@ const addProduct = async () => {
   }
 }
 
-// Функция добавления товара в корзину
+// Функция добавления товара в корзину(сделано добавление при клике на кнопку)
 function purchaseProduct() {
-  const cards = document.querySelectorAll('.main-card') // получаем все карточки
+  // const cards = document.querySelectorAll('.main-card') // получаем все карточки
+  const addButtons = document.querySelectorAll('.btn-primary')
 
-  cards.forEach((card) => {
-    card.addEventListener('click', () => getProductInfo(card))
+  // cards.forEach((card) => {
+  //   card.addEventListener('click', () => getProductInfo(card))
+  // })
+  addButtons.forEach((button) => {
+    button.addEventListener('click', () => getProductInfo(button.parentElement))
   })
 }
 
@@ -141,10 +145,10 @@ function purchaseProduct() {
 function getProductInfo(product) {
   const imgElement = product?.querySelector('.card-image img')
   const imgSrc = imgElement ? new URL(imgElement.src).pathname : '' // для преобразования относительного пути в абсолютный
-
+  //не используется, потому что при добавлении карточек на главную страницу с json servera,картинки с этих карточек не отображаются в корзине
   const productInfo = {
     id: product?.dataset.cardId ?? '',
-    imgSrc: imgSrc,
+    imgSrc: product?.querySelector('.card-image img')?.src ?? '',
     name: product?.querySelector('.card-name')?.textContent ?? '',
     category: product?.querySelector('.card-category')?.textContent ?? '',
     price: product?.querySelector('.card-price')?.textContent ?? '',
@@ -253,6 +257,7 @@ function loadCart() {
   elements.forEach((element) => addProductsToBasketList(element))
 
   updateCartInfo() // показ счетчика в корзине
+  checkBasketEmpty()
 }
 
 // Функция удаления товара из DOM
@@ -279,6 +284,7 @@ function deleteProduct(e) {
   localStorage.setItem('products', JSON.stringify(updateProducts)) // перезапись данных в LocalStorage
 
   updateCartInfo()
+  checkBasketEmpty()
 }
 
 // Функция для сохранения в localStorage
@@ -290,10 +296,28 @@ function saveProductInStorage(product) {
   localStorage.setItem('products', JSON.stringify(products)) // запись данных в localStorage
 
   updateCartInfo() // показ новых данных в корзине
+  checkBasketEmpty()
 }
 
 // Функция для получения данных из localStorage
 function getProductFromStorage() {
   // если данных нет, показываем []
   return localStorage.getItem('products') ? JSON.parse(localStorage.getItem('products')) : []
+}
+
+// функция вывода сообщения при пустой корзине
+function checkBasketEmpty() {
+  const products = getProductFromStorage()
+  const emptyBasketText = document.querySelector('#basket-list p')
+  if (products.length === 0) {
+    if (!emptyBasketText) {
+      const emptyBasketText = document.createElement('p')
+      emptyBasketText.textContent = 'Корзина пуста'
+      basketItemList.appendChild(emptyBasketText)
+    }
+  } else {
+    if (emptyBasketText) {
+      emptyBasketText.remove()
+    }
+  }
 }

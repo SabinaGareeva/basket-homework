@@ -31,14 +31,6 @@
       "rating": "3.0",
       "price": "102.10",
       "imgSrc": "/images/help-image-4.jpg"
-    },
-    {
-      "id": "ePKoVoL8xQhiYm4-LXiYj",
-      "name": "Коаллы",
-      "category": "Animal",
-      "rating": "4.8",
-      "price": "100",
-      "imgSrc": "https://icdn.lenta.ru/images/2022/12/26/17/20221226173913444/detail_55b7c0718f3cd17a24c785dededede99.jpg"
     }
   ]
 }
