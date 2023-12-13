@@ -152,6 +152,7 @@ function getProductInfo(product) {
     name: product?.querySelector('.card-name')?.textContent ?? '',
     category: product?.querySelector('.card-category')?.textContent ?? '',
     price: product?.querySelector('.card-price')?.textContent ?? '',
+    countProduct: 1,
   }
 
   addProductsToBasketList(productInfo) // добавление товара в корзину
@@ -182,7 +183,7 @@ function addProductsToBasketList(product) {
         <!-- Компонент степпер  -->
           <div class="counter">
             <label class="counter__field">
-              <input class="counter__input" type="text" value="1" maxlength="3" readonly />
+              <input class="counter__input" type="text" value="${product?.countProduct}" maxlength="3" readonly />
               <span class="counter__text">шт</span>
             </label>
             <div class="counter__btns">
@@ -222,6 +223,24 @@ function addProductsToBasketList(product) {
   // Need to fix
   const deleteButtons = document.querySelectorAll('#delete-icon')
 
+  const counters = document?.querySelectorAll('.counter')
+  // для каждого счетчика вешаю обработчик события для его переключения
+  counters.forEach((counter) => {
+    const counterInput = counter.querySelector('.counter__input')
+    let count = Number?.parseInt(counterInput?.value, 10)
+    const upButton = counter.querySelector('.counter__btn--up')
+    const downButton = counter.querySelector('.counter__btn--down')
+    upButton.addEventListener('click', () => {
+      count++
+      counterClick(counterInput, upButton, downButton, count)
+    })
+    downButton.addEventListener('click', () => {
+      count--
+      counterClick(counterInput, upButton, downButton, count)
+    })
+    // }) // передача счетчика
+  })
+  // для каждой кнопки удаления вешаю обработчик события для удаления элемента
   deleteButtons.forEach((deleteButton) => {
     deleteButton.addEventListener('click', deleteProduct) // передача функции удаления
   })
@@ -285,6 +304,12 @@ function deleteProduct(e) {
 
   updateCartInfo()
   checkBasketEmpty()
+}
+// функция переключения счетчика в корзине
+function counterClick(counterInput, upButton, downButton, count) {
+  downButton.toggleAttribute('disabled', count === 1)
+  upButton?.toggleAttribute('disabled', count === 10)
+  counterInput.value = count
 }
 
 // Функция для сохранения в localStorage
